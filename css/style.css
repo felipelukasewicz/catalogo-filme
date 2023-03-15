@@ -1,0 +1,26 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid img{
+    height: 25px;
+    width: 25px;
+    
+
+}
+
+#lista-filmes{
+    display: flex;
+    justify-content: start;
+    padding: 2rem;
+    flex-wrap: wrap;
+
+    
+    
+}
+
+
+
+
+
