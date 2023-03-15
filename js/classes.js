@@ -27,6 +27,7 @@ class Filme
         this.classificacao=classificacao;
         this.avaliacao=avaliacao;
         this.sinopse=sinopse;
+        this.btnDetalhes=null;
         
         
 
@@ -45,7 +46,7 @@ class Filme
         divDetalhes.setAttribute("style", "display:flex; justify-content: space-around");
         let divGenero = document.createElement("div");
         divGenero.setAttribute("style", "flex-grow:1");
-        let divAnoProducao = document.createAttribute("div");
+        let divAnoProducao = document.createElement("div");
         divAnoProducao.setAttribute("style", "flex-grow:1");
         let divClassificacao = document.createElement("div");
         divClassificacao.setAttribute("style", "flex-grow:1");
@@ -60,6 +61,9 @@ class Filme
         card.appendChild(cardBody);
         cardBody.appendChild(hCardTitle);
         cardBody.appendChild(divDetalhes);
+
+        this.setBtnDetalhes();
+        cardBody.appendChild(this.getBtnDetalhes());
         return card;
     }
     

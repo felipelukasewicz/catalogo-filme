@@ -5,10 +5,9 @@ let btnBuscarFilme = document.querySelector("#btn-buscar-filme");
 btnBuscarFilme.onclick = async () => {
     if(inputBuscarFilme.value.length > 0){
         let filmes = new Array();
-        fetch("http://www.omdbapi.com/?apikey=ed5e5ad5&s="+inputBuscarFilme.value, {mode:"cors"})
+        fetch("https://www.omdbapi.com/?apikey=ed5e5ad5&s="+inputBuscarFilme.value, {mode:"cors"})
         .then((resp)=> resp.json())
         .then((resp)=> {
-            console.log(resp);
             resp.Search.forEach((item)=>{
                 console.log(item);
                 let filme=new Filme(
@@ -33,7 +32,7 @@ btnBuscarFilme.onclick = async () => {
     }
     return false;
 }
-let listarFilmes = async (filmes) => {
+let listaFilmes = async (filmes) => {
     let listaFilmes = await document.querySelector("#lista-filmes");
     listaFilmes.innerHTML = "";
     console.log(listaFilmes);
@@ -45,4 +44,42 @@ let listarFilmes = async (filmes) => {
 
 }
 
+setBtnDetalhes=() => {
+    this.btnDetalhes.appendChild(document.createElement('button'));
+    this.btnDetalhes.appendChild(document.createElement('Detalhes'));
+    this.btnDetalhes.setAttribute("id", this.id);
+    this.btnDetalhes.setAttribute("class", "btnDetalhesFilme");
 
+}
+
+getBtnDetalhes=()=>{
+    return this.btnDetalhes
+}
+
+let detalhesFilme = async (id)=>{
+    fetch("https://www.omdbapi.com/?apikey=ed5e5ad5&i="+id)
+    .then((resp)=> resp.json())
+    .then((resp)=> {
+        console.log(resp)
+        let filme = new filme 
+        resp.Poster,
+        resp.Title;
+        
+
+    });
+}
+
+let listarFilmes = async (filmes) => {
+    let listaFilmes = await document.querySelector("#lista-filmes");
+    listaFilmes.innerHTML ="";
+
+    if(filmes.length > 0) {
+        filmes.forEach(async(filme) => {
+            console.log(filme);
+            listaFilmes.appendChild(await filme.getCard());
+            filme.getBtnDetalhes().onclick=()=>{
+                detalhesFilme(filme.id);
+            }
+        });
+    }
+}
