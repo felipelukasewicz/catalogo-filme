@@ -44,27 +44,23 @@ let listaFilmes = async (filmes) => {
 
 }
 
-setBtnDetalhes=() => {
-    this.btnDetalhes.appendChild(document.createElement('button'));
-    this.btnDetalhes.appendChild(document.createElement('Detalhes'));
-    this.btnDetalhes.setAttribute("id", this.id);
-    this.btnDetalhes.setAttribute("class", "btnDetalhesFilme");
-
-}
-
-getBtnDetalhes=()=>{
-    return this.btnDetalhes
-}
-
 let detalhesFilme = async (id)=>{
     fetch("https://www.omdbapi.com/?apikey=ed5e5ad5&i="+id)
     .then((resp)=> resp.json())
     .then((resp)=> {
         console.log(resp)
-        let filme = new filme 
+        let filme = new Filme(
+        resp.imdbID,
+        resp.Title,
+        resp.Year,
+        resp.Category,
         resp.Poster,
-        resp.Title;
-        
+        resp.Director,
+        resp.Actors,
+        resp.Classification,
+        resp.Assessment,
+        resp.Synopsis,
+        )
 
     });
 }

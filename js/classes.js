@@ -63,8 +63,21 @@ class Filme
         cardBody.appendChild(divDetalhes);
 
         this.setBtnDetalhes();
+        console.log(this.getBtnDetalhes());
         cardBody.appendChild(this.getBtnDetalhes());
         return card;
+    }
+
+    setBtnDetalhes=() => {
+        this.btnDetalhes = document.createElement('button');
+        this.btnDetalhes.appendChild(document.createTextNode('Detalhes'));
+        this.btnDetalhes.setAttribute("id", this.id);
+        this.btnDetalhes.setAttribute("class", "btnDetalhesFilme");
+    
+    }
+    
+    getBtnDetalhes=()=>{
+        return this.btnDetalhes
     }
     
     
