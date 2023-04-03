@@ -1,81 +1,135 @@
+const 
+  inputSearchMovie = document.querySelector("#input-search-movie"),
+  btnSearchMovie = document.querySelector("#btn-search-movie"),
+  showFavorites = document.querySelector("#nav-favorites"),
+  listMoviesEl = document.querySelector("#list-movies"),
+  showMovieEl = document.querySelector("#show-movie");
 
-let inputBuscarFilme = document.querySelector("#input-buscar-filme");
-let btnBuscarFilme = document.querySelector("#btn-buscar-filme");
+btnSearchMovie.onclick = async () => {
+  showMovieEl.innerHTML = "";
+  showMovieEl.setAttribute("style", "display: none;");
 
-btnBuscarFilme.onclick = async () => {
-    if(inputBuscarFilme.value.length > 0){
-        let filmes = new Array();
-        fetch("https://www.omdbapi.com/?apikey=ed5e5ad5&s="+inputBuscarFilme.value, {mode:"cors"})
-        .then((resp)=> resp.json())
-        .then((resp)=> {
-            resp.Search.forEach((item)=>{
-                console.log(item);
-                let filme=new Filme(
-                    item.imdbID,
-                    item.Title,
-                    item.Year,
-                    null,
-                    item.Poster,
-                    null,
-                    null,
-                    
-                    null,
-                    null,
-                    null,
-                    null,
-                
-                );
-                filmes.push(filme);
-            })
-            listarFilmes(filmes);
-        })
-    }
-    return false;
-}
-let listaFilmes = async (filmes) => {
-    let listaFilmes = await document.querySelector("#lista-filmes");
-    listaFilmes.innerHTML = "";
-    console.log(listaFilmes);
-    if(filmes.length > 0) {
-        filmes.forEach(async(filme) => {
-            listaFilmes.appendChild(await filme.getCard());
+  listMoviesEl.setAttribute("style", "display: flex;");
+
+  if (inputSearchMovie.value.length > 0) {
+    const movies = new Array();
+
+    fetch("http://www.omdbapi.com/?apikey=ed5e5ad5&s=" + inputSearchMovie.value)
+      .then((res) => res.json())
+      .then((res) => {
+        res.Search.forEach((item) => {
+          const movie = new Movie (
+            item.imdbID,
+            item.Title,
+            item.Year,
+            item.Genre || 'Indisponível',
+            item.Poster,
+            null,
+            null,
+            item.Rated || 'Indisponível',
+            null,
+            null,
+            null
+          );
+          
+          movies.push(movie);
         });
-    }
 
+        listMovies(movies);
+      });
+  }
+
+  return false;
 }
 
-let detalhesFilme = async (id)=>{
-    fetch("https://www.omdbapi.com/?apikey=ed5e5ad5&i="+id)
-    .then((resp)=> resp.json())
-    .then((resp)=> {
-        console.log(resp)
-        let filme = new Filme(
-        resp.imdbID,
-        resp.Title,
-        resp.Year,
-        resp.Category,
-        resp.Poster,
-        resp.Director,
-        resp.Actors,
-        resp.Classification,
-        resp.Assessment,
-        resp.Synopsis,
-        )
+showFavorites.onclick = (e) => {
+  e.preventDefault();
+  listFavorites();
 
+  listMoviesEl.setAttribute("style", "display: flex;");
+  showMovieEl.setAttribute("style", "display: none;");
+}
+
+const listMovies = async (movies) => {
+  const listMovies = listMoviesEl;
+  listMovies.innerHTML = "";
+  
+  if (movies.length > 0) {
+    movies.forEach(async (movie) => {
+      listMovies.appendChild(await movie.getCard());
+      
+      movie.getBtnDetails().onclick = () => {
+        showMovieEl.innerHTML = "";
+        detailsMovie(movie.id);
+      }
+    });
+  }
+}
+
+const detailsMovie = async (id) => {
+  fetch("http://www.omdbapi.com/?apikey=ed5e5ad5&i=" + id)
+    .then((res) => res.json())
+    .then((res) => {
+      const movie = new Movie (
+        res.imdbID,
+        res.Title,
+        res.Year,
+        res.Genre,
+        res.Poster,
+        res.Director,
+        res.Actors,
+        res.Rated,
+        res.imdbRanting,
+        res.Plot,
+        res.Released
+      )
+
+      showMovieEl.appendChild(movie.getDetailsMovie());
+      
+      document.querySelector("#btnClose").onclick = () => {
+        showMovieEl.innerHTML = "";
+        listMoviesEl.setAttribute("style", "display: flex;");
+      }
+
+      document.querySelector("#btnFavorite").onclick = (e) => {
+        const hasFavorited = e.target.getAttribute('has-favorited');
+        
+        hasFavorited === "true"
+          ? movie.deleteMovie(movie)
+          : movie.saveMovie(movie);
+      }
+      
+      listMoviesEl.setAttribute("style", "display: none;");
+      showMovieEl.setAttribute("style", "display: flex;");
     });
 }
 
-let listarFilmes = async (filmes) => {
-    let listaFilmes = await document.querySelector("#lista-filmes");
-    listaFilmes.innerHTML ="";
+listFavorites = () => {
+  const 
+    favoritesString = localStorage.getItem("@MoviesCatalogMaster:favorites"),
+    favorites = favoritesString ? JSON.parse(favoritesString) : [];
+    
+  const movies = new Array();
 
-    if(filmes.length > 0) {
-        filmes.forEach(async(filme) => {
-            console.log(filme);
-            listaFilmes.appendChild(await filme.getCard());
-            filme.getBtnDetalhes().onclick=()=>{
-                detalhesFilme(filme.id);
-            }
-        });
-    }
+  if (favorites.length > 0) {
+    favorites.forEach((item) => {
+      const movie = new Movie (
+        item.id,
+        item.title,
+        item.year,
+        item.gender,
+        item.poster,
+        item.director,
+        item.actors,
+        item.classificacao,
+        item.rated,
+        item.plot,
+        item.released
+      );
+      
+      movies.push(movie);
+    });
+  }
+  
+  listMovies(movies);
 }
